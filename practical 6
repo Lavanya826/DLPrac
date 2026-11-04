@@ -1,0 +1,230 @@
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+# 1. Load CIFAR-10 dataset
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+
+# 2. Resize images
+x_train = tf.image.resize(x_train[:5000], (96, 96))
+x_test = tf.image.resize(x_test[:1000], (96, 96))
+
+y_train = y_train[:5000]
+y_test = y_test[:1000]
+
+# 3. Load pre-trained MobileNetV2
+base_model = tf.keras.applications.MobileNetV2(
+    weights='imagenet',
+    include_top=False,
+    input_shape=(96, 96, 3)
+)
+
+# 4. Freeze base model
+base_model.trainable = False
+
+# 5. Add custom classifier
+model = tf.keras.Sequential([
+    base_model,
+    tf.keras.layers.GlobalAveragePooling2D(),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# 6. Compile model
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# 7. Train model
+model.fit(x_train, y_train, epochs=2, validation_split=0.2)
+
+# 8. Fine-tuning
+base_model.trainable = True
+
+for layer in base_model.layers[:-20]:
+    layer.trainable = False
+
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(0.00001),
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+model.fit(x_train, y_train, epochs=2)
+
+# 9. Evaluate model
+loss, accuracy = model.evaluate(x_test, y_test)
+
+print("Test Accuracy:", accuracy)
+print("Test Loss:", loss)
+
+# 10. Plot accuracy
+plt.plot(model.history.history['accuracy'])
+plt.title("Training Accuracy")
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy")
+plt.show()
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. Aim of the practical
+To implement transfer learning using a pre-trained CNN model (MobileNetV2) to classify images into different categories.
+2. What is Transfer Learning?
+Simple definition: Transfer learning means using an already trained model for a new task instead of training it from zero.
+
+Example:
+- MobileNetV2 is already trained to recognize images.
+- We use its knowledge to recognize our own image categories.
+- This saves time and training effort.
+Real-life example: A person who already knows how to identify cats can learn to identify dogs more easily.
+3. What is CNN?
+CNN stands for Convolutional Neural Network.
+
+It is a deep learning model mainly used for image processing.
+
+It identifies:
+- Edges
+- Shapes
+- Colours
+- Objects
+4. What is MobileNetV2?
+MobileNetV2 is a pre-trained CNN model.
+- It is trained on the ImageNet dataset.
+- It can recognize different objects.
+- We reuse this model instead of training a new model from scratch.
+5. Simple working of the practical
+Remember these 6 steps:
+1. Load dataset: Load CIFAR-10 images.
+2. Resize images: Convert images into the required size.
+3. Load model: Load pre-trained MobileNetV2.
+4. Freeze layers: Keep old model layers unchanged.
+5. Add classifier: Add new layers to classify our images.
+6. Train and evaluate: Train the model and check its accuracy.
+6. Simple Python code
+This is a simplified version of your practical using TensorFlow and MobileNetV2.
+import tensorflow as tfimport matplotlib.pyplot as plt# 1. Load CIFAR-10 dataset(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()# 2. Resize imagesx_train = tf.image.resize(x_train[:5000], (96, 96))x_test = tf.image.resize(x_test[:1000], (96, 96))y_train = y_train[:5000]y_test = y_test[:1000]# 3. Load pre-trained MobileNetV2base_model = tf.keras.applications.MobileNetV2(    weights='imagenet',    include_top=False,    input_shape=(96, 96, 3))# 4. Freeze base modelbase_model.trainable = False# 5. Add custom classifiermodel = tf.keras.Sequential([    base_model,    tf.keras.layers.GlobalAveragePooling2D(),    tf.keras.layers.Dense(128, activation='relu'),    tf.keras.layers.Dropout(0.2),    tf.keras.layers.Dense(10, activation='softmax')])# 6. Compile modelmodel.compile(    optimizer='adam',    loss='sparse_categorical_crossentropy',
+
+
+
+Note: This code is a simplified classroom implementation. MobileNetV2 normally expects preprocessing using its own preprocessing function. For better results, apply tf.keras.applications.mobilenet_v2.preprocess_input() to both datasets after resizing. The code performs image classification, not full object detection.
+7. Important functions explained
+Function	Simple meaning
+load_data()	Loads images
+resize()	Changes image size
+MobileNetV2()	Loads pre-trained model
+trainable=False	Freezes layers
+Dense()	Adds classification layer
+Dropout()	Reduces overfitting
+compile()	Configures model
+fit()	Trains model
+evaluate()	Checks performance
+softmax	Predicts class probabilities
+
+8. Important viva / interviewer questions and answers
+These are the questions your teacher can ask during practical viva.
+
+Q1. What is transfer learning?
+
+Ans: Transfer learning means using a pre-trained model for a new related task.
+
+Q2. What is CNN?
+
+Ans: CNN stands for Convolutional Neural Network. It is used for image processing.
+
+Q3. What is MobileNetV2?
+
+Ans: It is a pre-trained CNN model used for image recognition.
+
+Q4. What is ImageNet?
+
+Ans: ImageNet is a large dataset containing millions of labelled images.
+
+Q5. What is a pre-trained model?
+
+Ans: A model that is already trained on a large dataset.
+
+Q6. Why do we freeze layers?
+
+Ans: To keep the previously learned features unchanged.
+
+Q7. What is a classifier?
+
+Ans: A classifier predicts the category of an image.
+
+Q8. What is fine-tuning?
+
+Ans: Fine-tuning means unfreezing some pre-trained layers and training them again with a small learning rate.
+
+Q9. What is an epoch?
+
+Ans: One complete pass through the training dataset.
+
+Q10. What is the CIFAR-10 dataset?
+
+Ans: It contains 60,000 colour images divided into 10 classes.
+
+Q11. Name the 10 classes of CIFAR-10.
+
+Ans:
+1. Airplane
+2. Automobile
+3. Bird
+4. Cat
+5. Deer
+6. Dog
+7. Frog
+8. Horse
+9. Ship
+10. Truck
+Q12. What is the use of Dropout?
+
+Ans: It helps prevent overfitting.
+
+Q13. What is Softmax?
+
+Ans: Softmax converts model outputs into probabilities for different classes.
+
+Q14. What is the difference between training and testing?
+
+Ans:
+- Training: Teaching the model using images.
+- Testing: Checking the model using unseen images.
+Q15. Why do we use a low learning rate during fine-tuning?
+
+Ans: To avoid changing the already learned features too much.
+
+Q16. What is the difference between object detection and image classification?
+
+Ans:
+- Image classification identifies what is in an image.
+- Object detection identifies what is in an image and where it is located using bounding boxes.
+Q17. What is overfitting?
+
+Ans: When a model performs well on training data but poorly on new data.
+
+Q18. What is Global Average Pooling?
+
+Ans: It reduces feature maps into a smaller set of values before classification.
+
+Q19. What is the use of Dense layer?
+
+Ans: It learns patterns and helps predict the final class.
+
+Q20. What are the advantages of transfer learning?
+
+Ans:
+- Saves training time.
+- Requires less data.
+- Improves learning.
+- Reuses previously learned features.
+
+9. Difference between freezing and fine-tuning
+Freezing	Fine-tuning
+Layers are not trained.	Selected layers are trained again.
+Weights remain unchanged.	Weights can change.
+Used initially.	Used after initial training.
+
+10. Conclusion (write in practical journal)
+We successfully implemented transfer learning using the pre-trained MobileNetV2 CNN model. We froze the base layers, added a custom classifier, trained the model, performed fine-tuning and evaluated its performance.
