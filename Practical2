@@ -48,3 +48,228 @@ plt.plot(history.history['val_loss'])
 plt.title('Model Loss')
 plt.legend(['Training', 'Validation'])
 plt.show()
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+1. Aim of the practical
+To create a Feed-Forward Neural Network using TensorFlow and Keras, train it using the MNIST handwritten digit dataset, and check its accuracy.
+
+In simple words: We train a computer to recognize handwritten numbers from 0 to 9.
+2. What is a Feed-Forward Neural Network?
+A Feed-Forward Neural Network is a type of neural network in which data moves in only one direction:
+
+Input → Hidden Layer → Output
+
+Example:
+- Input: Image of handwritten digit 5.
+- Hidden layer: Processes the image.
+- Output: Predicts that the image contains number 5.
+
+
+Remember: Data moves only forward. There is no backward connection.
+3. Important theory in simple words
+A. What is TensorFlow?
+TensorFlow is a library used to create and train machine learning and deep learning models.
+B. What is Keras?
+Keras is a simple interface used to build neural networks easily.
+
+Remember:
+- TensorFlow = Deep learning framework.
+- Keras = Helps build neural networks easily.
+C. What is MNIST Dataset?
+MNIST is a dataset containing handwritten digit images from 0 to 9.
+- Total images: 70,000
+- Training images: 60,000
+- Testing images: 10,000
+- Image size: 28 × 28 pixels
+- Image type: Grayscale.
+
+D. What is SGD?
+SGD stands for Stochastic Gradient Descent.
+
+It is an optimization algorithm that updates weights and biases to reduce the model's error (loss).
+
+Simple example: If the model makes a wrong prediction, SGD helps improve its weights so that the next prediction can be better.
+E. What is Loss?
+Loss measures how wrong the model's prediction is.
+- Low loss = Better prediction.
+- High loss = More mistakes.
+F. What is Accuracy?
+Accuracy tells us how many predictions are correct.
+
+Example: If the model predicts 90 images correctly out of 100, accuracy is 90%.
+4. Simple Python code for practical
+This is a simple version that covers all the important requirements of your experiment.
+import tensorflow as tfimport matplotlib.pyplot as plt# Load MNIST dataset(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()# Normalize datax_train = x_train / 255.0x_test = x_test / 255.0# Create modelmodel = tf.keras.Sequential([    tf.keras.layers.Flatten(input_shape=(28, 28)),    tf.keras.layers.Dense(128, activation='relu'),    tf.keras.layers.Dense(10, activation='softmax')])# Compile modelmodel.compile(    optimizer=tf.keras.optimizers.SGD(),    loss='sparse_categorical_crossentropy',    metrics=['accuracy'])# Train modelhistory = model.fit(    x_train, y_train,    epochs=5,    validation_data=(x_test, y_test))# Evaluate modelloss, accuracy = model.evaluate(x_test, y_test)print("Test Loss:", loss)print("Test Accuracy:", accuracy)
+
+
+
+5. Code explanation (line by line)
+Code	Simple meaning
+import tensorflow	Imports TensorFlow
+import matplotlib.pyplot	Used to draw graphs
+load_data()	Loads MNIST dataset
+/255.0	Normalizes pixel values between 0 and 1
+Sequential()	Creates a neural network
+Flatten()	Converts 28×28 image into 1D array
+Dense(128)	Creates hidden layer with 128 neurons
+relu	Activation function
+Dense(10)	Output layer with 10 neurons
+softmax	Predicts probability for digits 0–9
+compile()	Configures the model
+SGD()	Optimizer
+fit()	Trains the model
+evaluate()	Checks model performance
+plt.plot()	Draws graphs
+
+6. Understand the working of the program
+1. Load dataset
+   
+   Load 60,000 training images and 10,000 testing images.
+2. Normalize images
+   
+   Convert pixel values from 0–255 into 0–1.
+3. Create neural network
+   
+   Create input, hidden and output layers.
+4. Compile model
+   
+   Select SGD optimizer, loss function and accuracy.
+5. Train model
+   
+   Model learns to recognize handwritten digits.
+6. Evaluate model
+   
+   Check loss and accuracy using test images.
+7. Plot graphs
+   
+   Display training and validation loss and accuracy.
+
+Easy trick to remember:
+
+Load → Normalize → Create → Compile → Train → Evaluate → Plot.
+7. Viva questions and answers
+These are important questions your practical examiner may ask.
+Basic questions
+Q1. What is a neural network?
+
+Ans: A neural network is a machine learning model inspired by the human brain.
+
+Q2. What is a Feed-Forward Neural Network?
+
+Ans: It is a neural network in which data moves only in one direction, from input to output.
+
+Q3. What are the three main layers?
+
+Ans:
+1. Input layer
+2. Hidden layer
+3. Output layer
+Q4. What is TensorFlow?
+
+Ans: TensorFlow is a deep learning framework used to build and train neural networks.
+
+Q5. What is Keras?
+
+Ans: Keras is an easy-to-use API for building neural networks.
+
+Q6. What is MNIST?
+
+Ans: MNIST is a dataset of 70,000 handwritten digit images from 0 to 9.
+
+Q7. What is the size of MNIST images?
+
+Ans: 28 × 28 pixels.
+
+Q8. How many training and testing images are there?
+
+Ans:
+- Training: 60,000
+- Testing: 10,000
+Technical questions
+Q9. What is normalization?
+
+Ans: Normalization converts pixel values from 0–255 into 0–1.
+
+Q10. Why do we use /255.0?
+
+Ans: To scale pixel values between 0 and 1.
+
+Q11. What is Flatten?
+
+Ans: Flatten converts a 2D image into a 1D array.
+
+Q12. What is a Dense layer?
+
+Ans: A Dense layer is a fully connected layer in which each neuron is connected to all neurons in the previous layer.
+
+Q13. What is ReLU?
+
+Ans: ReLU is an activation function that converts negative values into zero and keeps positive values unchanged.
+
+Q14. What is Softmax?
+
+Ans: Softmax converts output values into probabilities for each class.
+
+Q15. Why do we use 10 neurons in the output layer?
+
+Ans: Because there are 10 digits, from 0 to 9.
+
+Q16. What is SGD?
+
+Ans: SGD stands for Stochastic Gradient Descent. It updates weights to reduce loss.
+
+Q17. What is an epoch?
+
+Ans: One complete pass of the entire training dataset through the model.
+
+Q18. What is loss?
+
+Ans: Loss measures the error between actual and predicted output.
+
+Q19. What is accuracy?
+
+Ans: Accuracy measures the percentage of correct predictions.
+
+Q20. What is the difference between training and testing data?
+
+Ans:
+- Training data: Used to teach the model.
+- Testing data: Used to check model performance.
+Graph-related questions
+Q21. Why do we plot accuracy?
+
+Ans: To observe how the model's prediction performance improves during training.
+
+Q22. Why do we plot loss?
+
+Ans: To observe how the model's error decreases during training.
+
+Q23. What happens when loss decreases?
+
+Ans: The model is generally learning better.
+
+Q24. What is validation accuracy?
+
+Ans: Accuracy measured on separate validation data during training.
+
+Q25. Which optimizer is used in this practical?
+
+Ans: Stochastic Gradient Descent (SGD).
+
+8. Most important things to remember for your viva
+Quick revision
+Question	Answer
+Dataset	MNIST
+Total images	70,000
+Training images	60,000
+Testing images	10,000
+Image size	28 × 28
+Optimizer	SGD
+Hidden neurons	128
+Output neurons	10
+Hidden activation	ReLU
+Output activation	Softmax
+Epochs	5
+Library	TensorFlow + Keras
+Graph library	Matplotlib
