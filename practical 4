@@ -1,0 +1,281 @@
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+from tensorflow.keras import layers, Model
+
+# 1. Create normal data
+normal = np.random.normal(0, 1, (500, 4))
+
+# 2. Create abnormal data
+anomaly = np.random.normal(5, 1, (50, 4))
+
+# 3. Split normal data
+train = normal[:400]
+test = np.concatenate([normal[400:], anomaly])
+
+# 4. Build Encoder
+input_data = layers.Input(shape=(4,))
+
+encoded = layers.Dense(2, activation='relu')(input_data)
+
+# 5. Build Decoder
+decoded = layers.Dense(4, activation='linear')(encoded)
+
+# 6. Create Autoencoder
+autoencoder = Model(input_data, decoded)
+
+# 7. Compile model
+autoencoder.compile(
+    optimizer='adam',
+    loss='mse'
+)
+
+# 8. Train model using normal data
+autoencoder.fit(
+    train, train,
+    epochs=30,
+    batch_size=16,
+    verbose=0
+)
+
+# 9. Calculate reconstruction error
+prediction = autoencoder.predict(test)
+
+error = np.mean((test - prediction) ** 2, axis=1)
+
+# 10. Set threshold
+threshold = np.mean(
+    np.mean((train - autoencoder.predict(train)) ** 2, axis=1)
+) + 3 * np.std(
+    np.mean((train - autoencoder.predict(train)) ** 2, axis=1)
+)
+
+# 11. Detect anomalies
+result = error > threshold
+
+print("Threshold:", threshold)
+print("Anomalies detected:", np.sum(result))
+
+# 12. Plot errors
+plt.plot(error)
+plt.axhline(threshold, color='red')
+plt.xlabel("Data Samples")
+plt.ylabel("Reconstruction Error")
+plt.title("Anomaly Detection")
+plt.show()
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. What is the aim of this practical?
+Aim: To detect unusual or abnormal data using an Autoencoder neural network.
+
+In simple words: We train a computer to understand normal data. When it receives unusual data, it makes more mistakes while reconstructing it. Using those mistakes, we identify anomalies.
+2. What is Anomaly Detection?
+Anomaly detection means finding unusual data that is different from normal data.
+
+Examples:
+- Banking: Detecting unusual transactions or fraud.
+- Healthcare: Detecting abnormal heartbeats.
+- Network security: Detecting suspicious activities.
+- Industry: Detecting faulty machines.
+For example:
+Normal data	Anomaly
+₹500 transaction	₹5,00,000 unusual transaction
+Normal heartbeat	Abnormal heartbeat
+Normal machine temperature	Very high temperature
+
+3. What is an Autoencoder?
+An Autoencoder is a type of neural network that learns to copy its input.
+
+It has two main parts:
+
+1. Encoder
+- Takes the original input.
+- Compresses the data into a smaller form.
+- This smaller form is called Latent Representation.
+2. Decoder
+- Takes the compressed data.
+- Reconstructs the original data.
+
+
+
+
+
+
+
+blog.tensorflow.org
+
+
+Easy trick to remember:
+- Encoder = Compresses data.
+- Latent Space = Stores compressed data.
+- Decoder = Reconstructs data.
+4. How does anomaly detection work?
+Remember these 5 steps:
+1. Give normal data to the Autoencoder.
+2. Encoder compresses the data.
+3. Decoder reconstructs the data.
+4. Compare original data with reconstructed data.
+5. If the error is high, identify it as an anomaly.
+
+
+
+
+
+
+
+ff12.fastforwardlabs.com
+
+
+Example:
+Original value	Reconstructed value	Result
+10	9.8	Normal
+20	19.5	Normal
+100	45	Anomaly
+
+The unusual data has a higher reconstruction error.
+5. Simple Python Code
+This code uses a small sample dataset, so it is easy to understand and explain in your practical exam.
+import numpy as npimport tensorflow as tfimport matplotlib.pyplot as pltfrom tensorflow.keras import layers, Model# 1. Create normal datanormal = np.random.normal(0, 1, (500, 4))# 2. Create abnormal dataanomaly = np.random.normal(5, 1, (50, 4))# 3. Split normal datatrain = normal[:400]test = np.concatenate([normal[400:], anomaly])# 4. Build Encoderinput_data = layers.Input(shape=(4,))encoded = layers.Dense(2, activation='relu')(input_data)# 5. Build Decoderdecoded = layers.Dense(4, activation='linear')(encoded)# 6. Create Autoencoderautoencoder = Model(input_data, decoded)# 7. Compile modelautoencoder.compile(    optimizer='adam',    loss='mse')# 8. Train model using normal dataautoencoder.fit(    train, train,
+
+
+
+6. Code Explanation (Line by Line)
+Code	Simple meaning
+import numpy	Used for numerical calculations.
+import tensorflow	Used to build neural networks.
+import matplotlib	Used to draw graphs.
+np.random.normal()	Creates sample data.
+Input(shape=(4,))	Takes 4 input features.
+Dense(2)	Compresses 4 features into 2.
+Dense(4)	Reconstructs 2 features into 4.
+Model()	Creates the Autoencoder.
+compile()	Configures the model.
+adam	Optimizer used to train the model.
+mse	Measures reconstruction error.
+fit()	Trains the model.
+predict()	Reconstructs the input data.
+threshold	Maximum accepted normal error.
+error > threshold	Identifies anomalies.
+
+7. Important Terms for Viva
+1. What is Reconstruction Error?
+
+It is the difference between original data and reconstructed data.
+
+2. What is MSE?
+
+MSE stands for Mean Squared Error. It calculates the average squared difference between original and reconstructed values.
+
+Formula:
+\[
+MSE = \frac{1}{n}\sum_{i=1}^{n}(x_i-\hat{x}_i)^2
+\]
+
+3. What is Threshold?
+
+Threshold is a limit used to decide whether data is normal or abnormal.
+- Error below threshold = Normal.
+- Error above threshold = Anomaly.
+4. What is Adam Optimizer?
+
+Adam is an optimization algorithm that helps the model learn by updating its weights.
+
+5. What is Latent Representation?
+
+It is the compressed form of input data created by the encoder.
+
+8. Viva Questions and Answers
+These are important questions your teacher may ask.
+
+Q1. What is an Autoencoder?
+
+Ans: An Autoencoder is a neural network that learns to reconstruct its input.
+
+Q2. What is Anomaly Detection?
+
+Ans: It is the process of identifying unusual or abnormal data.
+
+Q3. How many main parts does an Autoencoder have?
+
+Ans: Two: Encoder and Decoder.
+
+Q4. What is the function of an Encoder?
+
+Ans: It compresses the input data.
+
+Q5. What is the function of a Decoder?
+
+Ans: It reconstructs the original input data.
+
+Q6. What is Latent Space?
+
+Ans: It is the compressed representation of input data.
+
+Q7. Why do we train the Autoencoder using normal data?
+
+Ans: So that it learns normal patterns and can identify unusual patterns.
+
+Q8. What is Reconstruction Error?
+
+Ans: It is the difference between original and reconstructed data.
+
+Q9. Which loss function is used in this practical?
+
+Ans: Mean Squared Error (MSE).
+
+Q10. Which optimizer is used?
+
+Ans: Adam optimizer.
+
+Q11. What is a Threshold?
+
+Ans: It is a limit used to classify data as normal or anomalous.
+
+Q12. What happens when reconstruction error is high?
+
+Ans: The data is classified as a potential anomaly.
+
+Q13. Where is anomaly detection used?
+
+Ans: Fraud detection, healthcare, network security and machine fault detection.
+
+Q14. Which libraries are used?
+
+Ans: NumPy, TensorFlow, Keras and Matplotlib.
+
+Q15. What is the difference between Encoder and Decoder?
+
+Ans: Encoder compresses data, whereas Decoder reconstructs data.
+
+Q16. Why do we use fit()?
+
+Ans: To train the Autoencoder.
+
+Q17. Why do we use predict()?
+
+Ans: To reconstruct the input and calculate reconstruction error.
+
+Q18. Can an Autoencoder detect fraud?
+
+Ans: Yes, it can identify unusual transactions using reconstruction error.
+
+Q19. What is an Epoch?
+
+Ans: One complete pass through the training dataset.
+
+Q20. Is every anomaly necessarily an error or fraud?
+
+Ans: No, it is only unusual data and needs further checking.
+
+9. Most Important: Remember These Steps for Your Practical Exam
+Practical working in 7 steps
+1. Create dataset – Generate normal and abnormal data.
+2. Encoder – Compress input data.
+3. Decoder – Reconstruct input data.
+4. Compile – Use Adam optimizer and MSE loss.
+5. Train – Train using normal data.
+6. Calculate error – Compare original and reconstructed data.
+7. Detect anomaly – Compare error with threshold.
