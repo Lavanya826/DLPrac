@@ -1,0 +1,236 @@
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+# Stage 1: Load dataset
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+
+# Normalize images
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# Stage 2: Create CNN model
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3,3), activation='relu',
+                           input_shape=(32,32,3)),
+
+    tf.keras.layers.MaxPooling2D((2,2)),
+
+    tf.keras.layers.Flatten(),
+
+    tf.keras.layers.Dense(64, activation='relu'),
+
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# Compile model
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Stage 3: Train model
+history = model.fit(x_train, y_train,
+                    epochs=5,
+                    validation_data=(x_test, y_test))
+
+# Stage 4: Evaluate model
+loss, accuracy = model.evaluate(x_test, y_test)
+
+print("Test Accuracy:", accuracy)
+print("Test Loss:", loss)
+
+# Plot accuracy
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title("Model Accuracy")
+plt.legend(['Training', 'Validation'])
+plt.show()
+
+# Plot loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title("Model Loss")
+plt.legend(['Training', 'Validation'])
+plt.show()
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+. Aim
+To build an image classification model using TensorFlow and Keras that identifies different objects in images.
+
+Example: If we give an image of a cat, the model predicts that it is a cat.
+2. What is Image Classification?
+Image classification means identifying an image and assigning it to a particular category.
+
+For example:
+- Cat image → Cat
+- Dog image → Dog
+- Car image → Automobile
+- Airplane image → Airplane
+We use a CNN (Convolutional Neural Network) to classify images.
+3. What is CNN?
+CNN stands for Convolutional Neural Network.
+
+It is a deep learning algorithm mainly used to identify images.
+
+It automatically identifies:
+- Edges
+- Shapes
+- Patterns
+- Objects
+Easy example: CNN looks at an image and learns whether it contains a cat, dog, car, etc.
+4. Four stages of this practical
+Remember these four stages for your practical exam.
+Image Classification – 4 Stages
+1. Loading and Preprocessing
+
+Load images and normalize pixel values between 0 and 1.
+
+
+2. Defining Model Architecture
+
+Create CNN layers to identify image features.
+
+
+3. Training the Model
+
+Train the model using training images.
+
+
+4. Estimating Performance
+
+Test the model and check accuracy and loss.
+
+
+Stage 1: Loading and Preprocessing
+First, we load the CIFAR-10 dataset.
+
+What is CIFAR-10?
+
+It is a dataset containing:
+- 60,000 color images.
+- Image size: 32 × 32 pixels.
+- 10 different classes.
+The 10 classes are:
+
+Airplane
+Automobile
+Bird
+Cat
+Deer
+Dog
+Frog
+Horse
+Ship
+Truck
+
+What is normalization?
+
+Converting pixel values from 0–255 into 0–1.
+
+Why? It makes calculations easier and helps the model train efficiently.
+
+Formula:
+\[
+\text{Normalized pixel}=\frac{\text{Pixel value}}{255}
+\]
+
+Stage 2: Defining Model Architecture
+We create a CNN model using different layers.
+Layer	Simple meaning
+Conv2D	Finds image features
+MaxPooling2D	Reduces image size
+Flatten	Converts data into one dimension
+Dense	Makes final predictions
+Softmax	Selects the most likely class
+
+Stage 3: Training the Model
+The model learns from training images.
+
+It identifies patterns and adjusts its weights to make better predictions.
+Stage 4: Estimating Performance
+We test the trained model using testing images.
+
+We check:
+- Accuracy – How many predictions are correct.
+- Loss – How much prediction error the model makes.
+
+5. Simple Python Code
+This is a simple version of the practical using TensorFlow and Keras.
+import tensorflow as tfimport matplotlib.pyplot as plt# Stage 1: Load dataset(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()# Normalize imagesx_train = x_train / 255.0x_test = x_test / 255.0# Stage 2: Create CNN modelmodel = tf.keras.Sequential([    tf.keras.layers.Conv2D(32, (3,3), activation='relu',                           input_shape=(32,32,3)),    tf.keras.layers.MaxPooling2D((2,2)),    tf.keras.layers.Flatten(),    tf.keras.layers.Dense(64, activation='relu'),    tf.keras.layers.Dense(10, activation='softmax')])# Compile modelmodel.compile(optimizer='adam',              loss='sparse_categorical_crossentropy',              metrics=['accuracy'])# Stage 3: Train modelhistory = model.fit(x_train, y_train,                    epochs=5,                    validation_data=(x_test, y_test))# Stage 4: Evaluate modelloss, accuracy = model.evaluate(x_test, y_test)
+
+
+
+6. Understand important code lines
+Code	Meaning
+import tensorflow	Imports TensorFlow
+cifar10.load_data()	Loads image dataset
+/255.0	Normalizes pixel values
+Conv2D()	Extracts image features
+MaxPooling2D()	Reduces image size
+Flatten()	Converts data into 1D
+Dense()	Makes predictions
+compile()	Configures the model
+fit()	Trains the model
+evaluate()	Tests model performance
+epochs=5	Repeats training 5 times
+plt.plot()	Displays graphs
+
+Important: Here, validation_data uses the test dataset to keep the code simple for your practical. In a proper machine learning workflow, validation data and final test data should be kept separate.
+
+7. Viva / Interview Questions with Answers
+These are important questions your teacher or interviewer can ask.
+Practice 20 viva questions
+0/20 revised
+
+1.What is image classification?
+
+2.What is CNN?
+
+3.Which dataset is used in this practical?
+
+4.How many images are present in CIFAR-10?
+
+5.How many classes are present in CIFAR-10?
+
+6.What is the image size in CIFAR-10?
+
+7.Why do we normalize images?
+
+8.What is Conv2D?
+
+9.What is MaxPooling?
+
+10.What is Flatten?
+
+11.What is a Dense layer?
+
+12.What is ReLU?
+
+13.What is Softmax?
+
+14.What is an epoch?
+
+15.What is training data?
+
+16.What is testing data?
+
+17.What is accuracy?
+
+18.What is loss?
+
+19.What is an optimizer?
+
+20.Which optimizer is used here?
+Show all answers
+8. Important differences for viva
+Training	Testing
+Teaches the model	Checks the model
+Uses training data	Uses testing data
+Learns patterns	Measures performance
+
+Accuracy	Loss
+Measures correct predictions	Measures prediction errors
+Higher is better	Lower is better
+
+9. Conclusion
+We successfully built an image classification model using CNN, TensorFlow and Keras. We loaded and normalized CIFAR-10 images, trained the model and evaluated its performance using accuracy and loss.
